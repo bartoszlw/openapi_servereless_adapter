@@ -1,0 +1,7 @@
+functions:
+  get_offer:
+    handler: tests.openapi_serverless_adapter.fixture_lambda.handle_get_pet
+    events:
+      - http:
+          path: /pet/{petId}
+          method: get
