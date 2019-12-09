@@ -35,7 +35,21 @@ def test_get_serverless_handler_mapping():
     }
 
 
-def test_get_with_path_param():
+def test_config_parsing_and_request():
+    api = PetApi()
+    mapping = prepare_mapping(read_serverless_config(DIR + "/serverless.yml"))
+    api.api_client.rest_client = Adapter(mapping, len(Configuration().host))
+
+    pet, status, _ = api.get_pet_by_id_with_http_info(32)
+
+    assert status == 200
+    assert pet.__class__ == Pet
+    assert pet.name == "petname"
+    assert pet.photo_urls[0] == "http://url.com/a.jpg"
+    assert len(pet.photo_urls) == 1
+
+
+def test_tuple_as_response():
     api = PetApi()
     mapping = prepare_mapping(read_serverless_config(DIR + "/serverless.yml"))
     api.api_client.rest_client = Adapter(mapping, len(Configuration().host))
