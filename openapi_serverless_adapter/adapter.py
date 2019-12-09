@@ -51,11 +51,17 @@ class Adapter:
                 _request_timeout=None):
         event, defined_handler = self.match(url)
         handler_function = getattr(importlib.import_module(defined_handler[0]), defined_handler[1])
-        out, status_code, headers = handler_function(event, {})
-        r = Response(status_code, json.dumps(out), lambda: [])
+        output = handler_function(event, {})
+        if isinstance(output, dict):
+            out = output['body']
+            status_code = output['statusCode']
+        else:
+            out, status_code = output
+            out = json.dumps(out)
+        r = Response(status_code, out, lambda: [])
 
-        if not 200 <= r.status <= 299:
-            raise ApiException(http_resp=r)
+        # if not 200 <= r.status <= 299:
+        #     raise ApiException(http_resp=r)
         return r
 
     def match(self, full_url) -> Tuple[dict, Handler]:

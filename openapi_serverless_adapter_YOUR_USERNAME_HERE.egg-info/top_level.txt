@@ -1,3 +1,0 @@
-openapi_serverless_adapter
-petstore_sdk
-tests
